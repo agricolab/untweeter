@@ -1,0 +1,7 @@
+like.js
+untweeter.ini
+*.pdf
+batch_unfave.py
+untweeter.egg-info/
+**/__pycache__/**
+
