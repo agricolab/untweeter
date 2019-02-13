@@ -43,17 +43,34 @@ def unfave_old_faves(api, ini, args):
             if args.dry:
                 print('...dry run')
                 continue
-            api.CreateFavorite(status_id=tweet_id)
-            print('...liked...', end='')
+
+            try:
+                api.CreateFavorite(status_id=tweet_id)
+                print('...liked', end='')
+            except twitter.TwitterError as err:
+                if err.message[0]['code'] == 139:
+                    print('...already liked', end='')
+                else:
+                    print("failed with: %s\n" % err.message)
+
             api.DestroyFavorite(status_id=tweet_id)
             print('...unliked!')
-
             ini.remove_old_fave(tweet_id)
-
             time.sleep(0.1)
+
         except twitter.TwitterError as err:
-            if 'No status found with that ID.' in err.message[0]['message']:
-                print('...not found')
+            if err.message[0]['code'] == 142:
+                print('...account is protected')
+            elif err.message[0]['code'] == 50:
+                print('...user not found')
+            elif err.message[0]['code'] == 139:
+                print('...already liked')
+                api.DestroyFavorite(status_id=tweet_id)
+                print('...unliked!')
+            elif err.message[0]['code'] == 144:
+                ini.remove_old_fave(tweet_id)
+                print('...tweet not found')
+
             else:
                 print("failed with: %s\n" % err.message)
 
