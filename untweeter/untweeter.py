@@ -29,7 +29,7 @@ def delete(api, restrict=100, args=None):
         print('No need to delete any tweets')
 
 def unlike(api, restrict=100, args=None):
-    faves = api.GetFavorites(count=200)
+    faves = api.GetFavorites(count=200, include_entities=False)
     print('You have {0:4d} faves'.format(len(faves)))
     if len(faves)>restrict:
         marks = faves[restrict:]

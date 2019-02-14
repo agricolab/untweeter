@@ -37,26 +37,29 @@ def unfave_old_faves(api, ini, args):
 
     request_count = 0
     for tweet_id in reversed(fave_ids):
+
+        request_count += 1
+        print ('Unfave #', request_count, tweet_id, end='')
+        if args.dry:
+            print('...dry run')
+            continue
+
+        # fave the old tweet
         try:
-            request_count += 1
-            print ('Deleting like #', request_count, tweet_id, end='')
-            if args.dry:
-                print('...dry run')
-                continue
+            api.CreateFavorite(status_id=tweet_id)
+            print('...faved', end='')
+        except twitter.TwitterError as err:
+            if err.message[0]['code'] == 139:
+                print('...already liked', end='')
+            if err.message[0]['code'] == 142:
+                print('...account is protected')
+            else:
+                print("failed with: %s\n" % err.message)
 
-            try:
-                api.CreateFavorite(status_id=tweet_id)
-                print('...liked', end='')
-            except twitter.TwitterError as err:
-                if err.message[0]['code'] == 139:
-                    print('...already liked', end='')
-                else:
-                    print("failed with: %s\n" % err.message)
-
+        # and unfave it again
+        try:
             api.DestroyFavorite(status_id=tweet_id)
-            print('...unliked!')
-            ini.remove_old_fave(tweet_id)
-            time.sleep(0.1)
+            print('...unfaved!')
 
         except twitter.TwitterError as err:
             if err.message[0]['code'] == 142:
@@ -70,10 +73,12 @@ def unfave_old_faves(api, ini, args):
             elif err.message[0]['code'] == 144:
                 ini.remove_old_fave(tweet_id)
                 print('...tweet not found')
-
             else:
                 print("failed with: %s\n" % err.message)
 
+        # delete from database
+        ini.remove_old_fave(tweet_id)
+        time.sleep(0.1)
 
 def main():
     'entry point for python -m batch-untweeter'
