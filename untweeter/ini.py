@@ -52,19 +52,22 @@ class Ini():
 
     def set_old_faves(self, fave_ids):
         self.ini.remove_section('LIKEJS')
-        self.ini.add_section('LIKEJS')        
+        self.ini.add_section('LIKEJS')
         for fid in fave_ids:
             self.ini.set('LIKEJS',str(fid),'FALSE')
         self.write()
-                    
-    def get_old_faves(self, count=500):        
-        fave_ids = self.ini.options('LIKEJS')        
+
+    def len_old_faves(self):
+        return len(self.ini.options('LIKEJS'))
+
+    def get_old_faves(self, count=500):
+        fave_ids = self.ini.options('LIKEJS')
         if (not fave_ids) or (count==0):
             return None
         else:
             return [int(fid) for fid in fave_ids[-count:]]
-    
+
     def remove_old_fave(self, fave_id):
         self.ini.remove_option('LIKEJS', str(fave_id))
         self.write()
-        
+

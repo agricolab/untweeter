@@ -29,11 +29,14 @@ def read_likejs(path=None):
 
 def unfave_old_faves(api, ini, args):
 
+    print(f'There are {ini.len_old_faves()} old faves')
     print(f'Planning to delete {args.delete} old faves')
+
     fave_ids = ini.get_old_faves(count=args.delete)
     if fave_ids is None:
         print('Nothing left to delete')
         return
+
 
     request_count = 0
     for tweet_id in reversed(fave_ids):
@@ -51,8 +54,12 @@ def unfave_old_faves(api, ini, args):
         except twitter.TwitterError as err:
             if err.message[0]['code'] == 139:
                 print('...already liked', end='')
-            if err.message[0]['code'] == 142:
-                print('...account is protected')
+            elif err.message[0]['code'] == 142:
+                print('...account is protected', end='')
+            elif err.message[0]['code'] == 144:
+                print('...tweet not found', end='')
+            elif err.message[0]['code'] == 50:
+                print('...user not found', end='')
             else:
                 print("failed with: %s\n" % err.message)
 
@@ -64,21 +71,18 @@ def unfave_old_faves(api, ini, args):
         except twitter.TwitterError as err:
             if err.message[0]['code'] == 142:
                 print('...account is protected')
+            elif err.message[0]['code'] == 144:
+                print('...tweet not found')
             elif err.message[0]['code'] == 50:
                 print('...user not found')
-            elif err.message[0]['code'] == 139:
-                print('...already liked')
-                api.DestroyFavorite(status_id=tweet_id)
-                print('...unliked!')
-            elif err.message[0]['code'] == 144:
-                ini.remove_old_fave(tweet_id)
-                print('...tweet not found')
             else:
                 print("failed with: %s\n" % err.message)
 
         # delete from database
         ini.remove_old_fave(tweet_id)
         time.sleep(0.1)
+
+    print(f'There are {ini.len_old_faves()} old faves left')
 
 def main():
     'entry point for python -m batch-untweeter'
