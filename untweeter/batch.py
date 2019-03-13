@@ -22,7 +22,14 @@ def read_likejs(path=None):
         else:
             s.append(lin.strip())
     s[-1] = '}'
-    faves = [json.loads(f) for f in ''.join(s).split(',')]
+    faves = []
+    for f in ''.join(s).split('}}, '):        
+        if f[-2:] != '}}':
+            _f = f +' }}'
+        else:
+            _f = f             
+        faves.append(json.loads(_f))
+                           
     fave_ids = [int(fave['like']['tweetId']) for fave in faves]
     return fave_ids
 
