@@ -16,8 +16,9 @@ def main():
         help="perform a dry run without any actual deletion",
     )
 
-    #   parser.add_argument('--reset', action="store_true",
-    #                       help='reset the ini file to defaults')
+    parser.add_argument(
+        "--list", action="store_true", help="print the current configuration"
+    )
 
     parser.add_argument("--tweet-limit", type=int, help="set the limit for tweets")
     parser.add_argument("--fave-limit", type=int, help="set the limit for faves")
@@ -27,16 +28,13 @@ def main():
     )
 
     args = parser.parse_args()
+    if args.list:
+        for key in cfg.config.keys():
+            print(f"[{key}]")
+            for k, v in cfg.config[key].items():
+                print(f"{k}: {v}")
 
-    # ini = Ini()
-    # if args.ask_for_keys:
-    #     ini.ask_for_keys()
-    # if args.tweet_limit:
-    #     ini.set_tweet_limit(args.tweet_limit)
-    # if args.fave_limit:
-    #     ini.set_fave_limit(args.tweet_limit)
-    # keys = ini.get_keys()
-    # restrict_tweets, restrict_faves = ini.get_limits()
+        quit()
 
     if args.ask_for_keys:
         cfg.ask_for_keys()
