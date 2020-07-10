@@ -14,7 +14,7 @@
     - Create a Twitter app
     - Fill in the details
     - Take note of the keys
-- You only need to fill out all of this once, afterwards untweeter read everything from an inifile in the main folder of the repo. Please note, that this means your access codes are stored in plain text. Treat with caution!
+- You only need to fill out all of this once, afterwards untweeter read everything from an inifile in your user directory. Please note, that this means your access codes are stored in plain text. Treat with caution!
 - If you later want to remove tweets and faves above the limit just run
 ```{bash}
     python -m untweeter
@@ -48,4 +48,4 @@ Anyways, to do this you can follow this examples:
     ``` {bash}
     python -m untweeter.batch --delete 100
     ```
-- Again, if you want a dry run without any actual deletion, add ```--dry```    
+- Again, if you want a dry run without any actual deletion, add ```--dry```
