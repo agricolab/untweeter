@@ -7,5 +7,9 @@ setup(
    author='Robert Guggenberger',
    author_email='robertsadresse@gmx.de',
    license="MIT",
-   packages=['untweeter']
+   packages=['untweeter'],
+   install_requires=["python-twitter", "confuse"],
+   entry_points = {
+        'console_scripts': ['untweet=untweeter.__main__:main'],
+    }
 )
